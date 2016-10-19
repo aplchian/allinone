@@ -44,19 +44,46 @@ const Guess = React.createClass({
       cpuNumber: this.state.cpuNumber
     })
   },
-  cpuGuess: function(e){
+  cpuGuess: function(e,h,l){
     if(e){
       e.preventDefault
     }
-    var num = this.getRand(1,10)
+    var num
+    if(typeof h !== 'number' && typeof l !== 'number'){
+      num = this.getRand(1,10)
+      console.log(num)
+      this.setState({
+        l: 1,
+        h: 10,
+        userNumber: this.state.userNumber
+      })
+    }else{
+      num = this.getRand(l,h)
+    }
+
     if(this.state.userNumber === num){
       alert('You got it!')
     }else{
-      alert('you got it wrong')
-      var hint = prompt("Higher or Lower?")
-      this.cpuGuess()
+      var hint = prompt("WRONG! h or l? " + num)
+      if(hint === 'h'){
+        this.setState({
+          l: this.state.l,
+          h: num - 1,
+          userNumber: this.state.userNumber
+        }, () => {
+          // this.cpuGuess(null,this.state.h,this.state.l)
+        })
+      }else{
+          this.setState({
+            l: num + 1,
+            h: this.state.h,
+            userNumber: this.state.userNumber
+          }, () => {
+            console.log('this.set.state.h',this.state.h,'this.set.state.h',this.state.)
+            // this.cpuGuess(null,this.state.h,this.state.l)
+          })
+      }
     }
-
   },
   render: function () {
     return (
