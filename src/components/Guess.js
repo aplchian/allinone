@@ -6,8 +6,9 @@ const Guess = React.createClass({
     return {
       guess: '',
       number: '',
-      userNumber: '',
-      cpuNumber: ''
+      cpuNumber: '',
+      low: 1,
+      high: 10
     }
   },
   updateGuess: function (e) {
@@ -20,6 +21,11 @@ const Guess = React.createClass({
   },
   getRand: function(l,h){
     return Math.floor(Math.random() * (h - l + 1)) + l;
+    // if low
+    //return Math.floor(Math.random() * (this.userNumber - (cpuNumber + 1) + 1)) + (cpuNumber + 1);
+    // if higher
+    //return Math.floor(Math.random() * ((cpuNumber - 1) - this.userNumber + 1)) + (this.userNumber + 1);
+
   },
   genNumber: function (e) {
     e.preventDefault
@@ -44,20 +50,63 @@ const Guess = React.createClass({
       cpuNumber: this.state.cpuNumber
     })
   },
-  cpuGuess: function(e){
-    if(e){
-      e.preventDefault
-    }
-    var num = this.getRand(1,10)
-    if(this.state.userNumber === num){
-      alert('You got it!')
-    }else{
-      alert('you got it wrong')
-      var hint = prompt("Higher or Lower?")
-      this.cpuGuess()
-    }
-
+  startGame: function (e) {
+    e.preventDefault
+    this.setState({
+      cpuNumber: this.getRand(1,10),
+      high: this.state.high,
+      low: this.state.low
+    }, _ => {
+      alert(this.state.cpuNumber)
+    })
   },
+  updateLower: function (e) {
+    e.preventDefault
+    var num = this.state.cpuNumber
+    this.setState({
+      high: this.state.cpuNumber - 1,
+      low: this.state.low,
+      cpuNumber: this.getRand(this.state.low, num - 1)
+    }, _ => {
+      alert(this.state.cpuNumber)
+    })
+  },
+  updateHigher: function (e) {
+    e.preventDefault
+    var num = this.state.cpuNumber
+    this.setState({
+      high: this.state.high,
+      low: this.state.cpuNumber + 1,
+      cpuNumber: this.getRand(num + 1, this.state.high)
+    }, _ => {
+      alert(this.state.cpuNumber)
+    })
+  },
+  endGame: function (e) {
+    e.preventDefault
+    this.setState({
+      high: 10,
+      low: 1,
+      cpuNumber: ''
+    }, _ => {
+      alert('You did it, computer.')
+    })
+  },
+
+  // cpuGuess: function(e){
+  //   if(e){
+  //     e.preventDefault
+  //   }
+  //   var num = this.getRand(1,10)
+  //   console.log(num)
+  //   if (this.state.userNumber === num){
+  //     alert('You got it!')
+  //   } else {
+  //     alert('you got it wrong')
+  //     this.cpuGuess()
+  //   }
+  //
+  // },
   render: function () {
     return (
     h('div', [
@@ -74,13 +123,18 @@ const Guess = React.createClass({
         }, 'Get Number')
       ]),
       h('form.pa3',[
-        h('input',{
-          onChange: this.chooseNumber,
-          placeholder: "select 1-10",
-        }),
         h('button',{
-          onClick: this.cpuGuess
-        },'Computer Guess')
+          onClick: this.startGame,
+        }, 'Start'),
+        h('button',{
+          onClick: this.endGame,
+        }, 'Yes'),
+        h('button',{
+          onClick: this.updateLower,
+        }, 'Lower'),
+        h('button',{
+          onClick: this.updateHigher,
+        }, 'Higher')
       ])
     ])
   )}
