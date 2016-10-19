@@ -5,7 +5,9 @@ const Guess = React.createClass({
   getInitialState: function () {
     return {
       guess: '',
-      number: ''
+      number: '',
+      userNumber: '',
+      cpuNumber: ''
     }
   },
   updateGuess: function (e) {
@@ -16,15 +18,16 @@ const Guess = React.createClass({
     console.log('guess', this.state.guess)
     console.log('number', this.state.number)
   },
+  getRand: function(l,h){
+    return Math.floor(Math.random() * (h - l + 1)) + l;
+  },
   genNumber: function (e) {
     e.preventDefault
-    var ranInt =  Math.floor(Math.random() * (10 - 1 + 1)) + 1;
-    // console.log(ranInt)
+    var ranInt =  this.getRand();
     this.setState ({
       number: ranInt,
       guess: this.state.guess
     })
-    // console.log(this.state)
   },
   compareNum : function (e) {
     e.preventDefault
@@ -34,6 +37,27 @@ const Guess = React.createClass({
       alert('Try again!')
     }
   },
+  chooseNumber: function(e){
+    console.log(e.target.value)
+    this.setState({
+      userNumber: parseInt(e.target.value),
+      cpuNumber: this.state.cpuNumber
+    })
+  },
+  cpuGuess: function(e){
+    if(e){
+      e.preventDefault
+    }
+    var num = this.getRand(1,10)
+    if(this.state.userNumber === num){
+      alert('You got it!')
+    }else{
+      alert('you got it wrong')
+      var hint = prompt("Higher or Lower?")
+      this.cpuGuess()
+    }
+
+  },
   render: function () {
     return (
     h('div', [
@@ -41,7 +65,6 @@ const Guess = React.createClass({
         h('input', {
           onChange: this.updateGuess,
           placeholder: 'Guess 1 - 10',
-          //value: this.state.guess,
         }),
         h('button.pill', {
           onClick: this.compareNum,
@@ -49,22 +72,24 @@ const Guess = React.createClass({
         h('button.pill', {
           onClick: this.genNumber
         }, 'Get Number')
+      ]),
+      h('form.pa3',[
+        h('input',{
+          onChange: this.chooseNumber,
+          placeholder: "select 1-10",
+        }),
+        h('button',{
+          onClick: this.cpuGuess
+        },'Computer Guess')
       ])
     ])
   )}
 })
+
 module.exports = Guess
 
-// have the computer randomly select number 1 - 10
-// and have the user try to guess the number
-// and the computer will respond higher or lower
-// until
-
-// ----
 
 // have the user think of a number 1 - 10, and
 // make the computer guess the number
 // by the user providing input
 // higher or lower
-
-//
